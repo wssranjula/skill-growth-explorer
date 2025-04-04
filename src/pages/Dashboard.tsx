@@ -6,7 +6,8 @@ import {
   useLearningItems,
   getSkillLevelText,
   getSkillLevelColor,
-  getSkillLevelBgColor
+  getSkillLevelBgColor,
+  calculateTotalPoints
 } from "@/lib/data-service";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MicroLessonsCard from "@/components/MicroLessonsCard";
+import { cn } from "@/lib/utils";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -73,24 +75,108 @@ const Dashboard = () => {
     return Math.round((currentIndex / targetIndex) * 100);
   };
 
+  // Calculate total points and progress
+  const completedLessons = microLessons?.filter(lesson => lesson.completed) || [];
+  const completedResources = learningItems?.filter(item => item.completed) || [];
+  const totalPoints = calculateTotalPoints(completedLessons, completedResources);
+  const maxPoints = 1000; // Maximum points possible
+  const progressPercentage = Math.min(100, Math.round((totalPoints / maxPoints) * 100));
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="bg-gradient-to-r from-primary/20 via-primary/10 to-transparent p-8 rounded-xl shadow-sm mb-6 border border-primary/10">
-        <div className="flex items-center gap-4">
-          <div className="bg-primary/10 p-4 rounded-full">
-            <UserCircle className="h-5 w-5 text-primary" />
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <h1 className="text-3xl font-bold">Welcome back, Alex!</h1>
-              <UserCircle className="h-6 w-6 text-primary" />
-            </div>
-            <div className="flex items-center gap-2 text-muted-foreground mt-1">
-              <p>Keep up the good work! You're making progress every day.</p>
-            </div>
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-800 mb-2">Welcome back, Alex!</h1>
+            <p className="text-gray-500">Keep up the good work! You're making progress every day.</p>
           </div>
         </div>
       </div>
+
+      {/* Mountain Climbing Progress */}
+      <Card className="shadow-lg overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/10 dark:to-purple-900/10">
+          <CardTitle className="flex items-center gap-2">
+            <Trophy className="h-5 w-5 text-yellow-500" />
+            Your Learning Journey
+          </CardTitle>
+          <CardDescription>Climb the mountain of knowledge! Each step represents your progress.</CardDescription>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="relative h-[400px] w-full">
+            {/* Mountain Background */}
+            <div className="absolute inset-0 bg-gradient-to-t from-blue-100 to-blue-50 rounded-lg" />
+            
+            {/* Mountain Steps */}
+            <div className="absolute inset-0 flex flex-col justify-end items-center pb-8">
+              {/* Flag at the top */}
+              <div className={cn(
+                "absolute top-4 left-1/2 transform -translate-x-1/2 transition-opacity duration-500",
+                progressPercentage === 100 ? "opacity-100" : "opacity-50"
+              )}>
+                <div className="relative">
+                  <div className="h-16 w-2 bg-red-500" />
+                  <div className="absolute top-0 right-0 h-8 w-12 bg-red-500 animate-wave" />
+                </div>
+              </div>
+
+              {/* Steps */}
+              <div className="relative w-full max-w-2xl mx-auto">
+                {[...Array(5)].map((_, index) => {
+                  const stepProgress = (index + 1) * 20;
+                  const isCompleted = progressPercentage >= stepProgress;
+                  const isCurrent = progressPercentage >= stepProgress - 20 && progressPercentage < stepProgress;
+                  
+                  return (
+                    <div
+                      key={index}
+                      className={cn(
+                        "absolute h-16 transition-colors duration-300",
+                        "border-2",
+                        isCompleted ? "bg-green-100 border-green-500" : "bg-gray-100 border-gray-300",
+                        isCurrent ? "ring-2 ring-primary ring-offset-2" : ""
+                      )}
+                      style={{
+                        width: `${60 + index * 20}%`,
+                        bottom: `${index * 64}px`,
+                        left: `${50 - (30 + index * 10)}%`,
+                        transform: `rotate(${index % 2 === 0 ? 2 : -2}deg)`,
+                      }}
+                    >
+                      {/* Step Content */}
+                      <div className="flex items-center justify-between h-full px-4">
+                        <span className="font-medium">Level {index + 1}</span>
+                        <div className="flex items-center gap-2">
+                          <span>{stepProgress}%</span>
+                          {isCompleted && <CheckCircle className="h-5 w-5 text-green-500" />}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* Climber */}
+                <div 
+                  className="absolute left-1/2 transform -translate-x-1/2 transition-all duration-500 ease-out"
+                  style={{
+                    bottom: `${(Math.floor(progressPercentage / 20)) * 64}px`,
+                  }}
+                >
+                  <div className="relative">
+                    <UserCircle className="h-8 w-8 text-primary animate-bounce" />
+                    {/* Progress Label */}
+                    <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                      <Badge variant="secondary" className="shadow-sm">
+                        {totalPoints} / {maxPoints} points
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
