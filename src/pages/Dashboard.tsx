@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { 
   useProgressData, 
@@ -25,7 +24,8 @@ import {
   Zap,
   TrendingUp,
   Flame,
-  Sparkles
+  Sparkles,
+  UserCircle
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -75,21 +75,20 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-6 rounded-lg mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">Welcome back, Alex</h1>
-        <p className="text-muted-foreground mt-1">
-          Your learning journey continues. You're making great progress!
-        </p>
-        <div className="flex flex-wrap items-center gap-3 mt-4">
-          <Badge className="bg-primary/20 text-primary hover:bg-primary/30 gap-1">
-            <Flame className="h-3.5 w-3.5" /> 5 Day Streak
-          </Badge>
-          <Badge variant="outline" className="gap-1">
-            <Trophy className="h-3.5 w-3.5 text-amber-500" /> 72% Monthly Goal
-          </Badge>
-          <Badge variant="outline" className="gap-1">
-            <Target className="h-3.5 w-3.5 text-blue-500" /> 3 Skills in Progress
-          </Badge>
+      <div className="bg-gradient-to-r from-primary/20 via-primary/10 to-transparent p-8 rounded-xl shadow-sm mb-6 border border-primary/10">
+        <div className="flex items-center gap-4">
+          <div className="bg-primary/10 p-4 rounded-full">
+            <UserCircle className="h-5 w-5 text-primary" />
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <h1 className="text-3xl font-bold">Welcome back, Alex!</h1>
+              <UserCircle className="h-6 w-6 text-primary" />
+            </div>
+            <div className="flex items-center gap-2 text-muted-foreground mt-1">
+              <p>Keep up the good work! You're making progress every day.</p>
+            </div>
+          </div>
         </div>
       </div>
 

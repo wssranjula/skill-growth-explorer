@@ -1,8 +1,8 @@
-
 import { useQuery } from "@tanstack/react-query";
 
 // Types
 export type SkillLevel = "beginner" | "intermediate" | "advanced" | "expert";
+export type DifficultyLevel = "beginner" | "intermediate" | "advanced";
 
 export interface Skill {
   id: string;
@@ -11,6 +11,7 @@ export interface Skill {
   currentLevel: SkillLevel;
   targetLevel: SkillLevel;
   relevance: number; // 0-100
+  term: "short" | "mid" | "long"; // short-term (1 month), mid-term (3 months), long-term (6 months)
 }
 
 export interface LearningItem {
@@ -22,6 +23,7 @@ export interface LearningItem {
   skillIds: string[];
   completed: boolean;
   url: string;
+  difficulty: DifficultyLevel;
 }
 
 export interface MicroLesson {
@@ -32,6 +34,7 @@ export interface MicroLesson {
   duration: number; // in minutes
   completed: boolean;
   hasQuiz: boolean;
+  difficulty: DifficultyLevel;
 }
 
 export interface ProgressData {
@@ -40,6 +43,7 @@ export interface ProgressData {
   resourcesViewed: number;
   streakDays: number;
   weeklyProgress: number[]; // Percentage complete for each day of the week
+  totalPoints: number;
 }
 
 // Mock data
@@ -51,6 +55,7 @@ const mockSkills: Skill[] = [
     currentLevel: "intermediate",
     targetLevel: "advanced",
     relevance: 95,
+    term: "short"
   },
   {
     id: "skill-2",
@@ -58,7 +63,8 @@ const mockSkills: Skill[] = [
     category: "Programming",
     currentLevel: "intermediate",
     targetLevel: "advanced",
-    relevance: 90,
+    relevance: 100,
+    term: "mid"
   },
   {
     id: "skill-3",
@@ -67,6 +73,7 @@ const mockSkills: Skill[] = [
     currentLevel: "beginner",
     targetLevel: "intermediate",
     relevance: 85,
+    term: "mid"
   },
   {
     id: "skill-4",
@@ -75,6 +82,7 @@ const mockSkills: Skill[] = [
     currentLevel: "intermediate",
     targetLevel: "advanced",
     relevance: 92,
+    term: "short"
   },
   {
     id: "skill-5",
@@ -83,6 +91,7 @@ const mockSkills: Skill[] = [
     currentLevel: "intermediate",
     targetLevel: "advanced",
     relevance: 88,
+    term: "long"
   },
   {
     id: "skill-6",
@@ -91,6 +100,7 @@ const mockSkills: Skill[] = [
     currentLevel: "beginner",
     targetLevel: "intermediate",
     relevance: 80,
+    term: "long"
   },
 ];
 
@@ -104,6 +114,7 @@ const mockLearningItems: LearningItem[] = [
     skillIds: ["skill-1"],
     completed: false,
     url: "#",
+    difficulty: "advanced"
   },
   {
     id: "resource-2",
@@ -114,6 +125,7 @@ const mockLearningItems: LearningItem[] = [
     skillIds: ["skill-2"],
     completed: false,
     url: "#",
+    difficulty: "advanced"
   },
   {
     id: "resource-3",
@@ -124,6 +136,7 @@ const mockLearningItems: LearningItem[] = [
     skillIds: ["skill-3"],
     completed: false,
     url: "#",
+    difficulty: "intermediate"
   },
   {
     id: "resource-4",
@@ -134,6 +147,7 @@ const mockLearningItems: LearningItem[] = [
     skillIds: ["skill-4"],
     completed: true,
     url: "#",
+    difficulty: "advanced"
   },
   {
     id: "resource-5",
@@ -144,6 +158,7 @@ const mockLearningItems: LearningItem[] = [
     skillIds: ["skill-5"],
     completed: false,
     url: "#",
+    difficulty: "advanced"
   },
   {
     id: "resource-6",
@@ -154,6 +169,7 @@ const mockLearningItems: LearningItem[] = [
     skillIds: ["skill-6"],
     completed: false,
     url: "#",
+    difficulty: "advanced"
   },
 ];
 
@@ -165,7 +181,8 @@ const mockMicroLessons: MicroLesson[] = [
     skillId: "skill-1",
     duration: 5,
     completed: false,
-    hasQuiz: true,
+    hasQuiz: false,
+    difficulty: "advanced"
   },
   {
     id: "lesson-2",
@@ -175,6 +192,7 @@ const mockMicroLessons: MicroLesson[] = [
     duration: 5,
     completed: true,
     hasQuiz: true,
+    difficulty: "advanced"
   },
   {
     id: "lesson-3",
@@ -184,6 +202,7 @@ const mockMicroLessons: MicroLesson[] = [
     duration: 5,
     completed: false,
     hasQuiz: false,
+    difficulty: "intermediate"
   },
 ];
 
@@ -193,6 +212,7 @@ const mockProgressData: ProgressData = {
   resourcesViewed: 8,
   streakDays: 5,
   weeklyProgress: [65, 70, 75, 80, 60, 0, 0], // Mon-Sun
+  totalPoints: 750 // Initial points
 };
 
 // Mock API functions
@@ -282,10 +302,47 @@ export const getSkillLevelColor = (level: SkillLevel): string => {
 
 // Helper function to get skill level background color
 export const getSkillLevelBgColor = (level: SkillLevel): string => {
-  return {
-    beginner: "bg-skill-beginner/10",
-    intermediate: "bg-skill-intermediate/10",
-    advanced: "bg-skill-advanced/10",
-    expert: "bg-skill-expert/10",
-  }[level] || "bg-gray-100";
+  switch (level) {
+    case "beginner":
+      return "bg-blue-100";
+    case "intermediate":
+      return "bg-green-100";
+    case "advanced":
+      return "bg-purple-100";
+    case "expert":
+      return "bg-amber-100";
+    default:
+      return "bg-gray-100";
+  }
+};
+
+// Points calculation utility functions
+export const getPointsForDifficulty = (difficulty: DifficultyLevel): number => {
+  switch (difficulty) {
+    case "beginner":
+      return 10;
+    case "intermediate":
+      return 25;
+    case "advanced":
+      return 50;
+    default:
+      return 5;
+  }
+};
+
+export const calculateTotalPoints = (
+  completedLessons: MicroLesson[], 
+  completedResources: LearningItem[]
+): number => {
+  const lessonPoints = completedLessons.reduce(
+    (total, lesson) => total + getPointsForDifficulty(lesson.difficulty), 
+    0
+  );
+  
+  const resourcePoints = completedResources.reduce(
+    (total, resource) => total + getPointsForDifficulty(resource.difficulty), 
+    0
+  );
+  
+  return lessonPoints + resourcePoints;
 };
