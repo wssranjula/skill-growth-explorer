@@ -1,16 +1,30 @@
 
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSkills, getSkillLevelText, getSkillLevelColor, getSkillLevelBgColor } from "@/lib/data-service";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useSkills, getSkillLevelText, getSkillLevelColor, getSkillLevelBgColor, Skill, SkillLevel } from "@/lib/data-service";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { BrainCircuit, ArrowRight, TrendingUp, AlertCircle } from "lucide-react";
+import { BrainCircuit, ArrowRight, TrendingUp, AlertCircle, Plus, X } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 const SkillsAnalysis = () => {
   const navigate = useNavigate();
   const { data: skills, isLoading } = useSkills();
+  const [openDialog, setOpenDialog] = useState(false);
+  const [newSkill, setNewSkill] = useState({
+    name: "",
+    category: "",
+    currentLevel: "beginner" as SkillLevel,
+    targetLevel: "intermediate" as SkillLevel,
+    relevance: 85,
+  });
 
   // Convert skill level to progress percentage
   const getLevelProgressPercentage = (current: string, target: string) => {
@@ -25,6 +39,33 @@ const SkillsAnalysis = () => {
     return Math.round((currentIndex / targetIndex) * 100);
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewSkill({
+      ...newSkill,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSelectChange = (name: string, value: string) => {
+    setNewSkill({
+      ...newSkill,
+      [name]: value,
+    });
+  };
+
+  const handleAddSkill = () => {
+    // This would normally call an API to add the skill
+    toast.success(`Skill "${newSkill.name}" added successfully`);
+    setOpenDialog(false);
+    setNewSkill({
+      name: "",
+      category: "",
+      currentLevel: "beginner",
+      targetLevel: "intermediate",
+      relevance: 85,
+    });
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
@@ -34,12 +75,20 @@ const SkillsAnalysis = () => {
             Review your skill profile and development areas
           </p>
         </div>
-        <Button 
-          className="mt-4 sm:mt-0"
-          onClick={() => navigate("/learning-plan")}
-        >
-          View Learning Plan <ArrowRight className="ml-2 h-4 w-4" />
-        </Button>
+        <div className="flex gap-3 mt-4 sm:mt-0">
+          <Button 
+            variant="outline"
+            onClick={() => navigate("/trending")}
+          >
+            <TrendingUp className="mr-2 h-4 w-4" />
+            Trending Content
+          </Button>
+          <Button 
+            onClick={() => navigate("/learning-plan")}
+          >
+            View Learning Plan <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       {/* Analysis summary */}
@@ -82,7 +131,106 @@ const SkillsAnalysis = () => {
 
       {/* Skills grid */}
       <div>
-        <h2 className="text-xl font-semibold mb-4">Your Skills</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold">Your Skills</h2>
+          <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+            <DialogTrigger asChild>
+              <Button size="sm">
+                <Plus className="mr-2 h-4 w-4" />
+                Add New Skill
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Add New Skill</DialogTitle>
+                <DialogDescription>
+                  Track a new skill you want to develop or showcase on your profile.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="name">Skill Name</Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    placeholder="e.g. TypeScript, Machine Learning"
+                    value={newSkill.name}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="category">Category</Label>
+                  <Input
+                    id="category"
+                    name="category"
+                    placeholder="e.g. Programming, Design"
+                    value={newSkill.category}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="currentLevel">Current Level</Label>
+                    <Select
+                      value={newSkill.currentLevel}
+                      onValueChange={(value) => handleSelectChange("currentLevel", value)}
+                    >
+                      <SelectTrigger id="currentLevel">
+                        <SelectValue placeholder="Select level" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="beginner">Beginner</SelectItem>
+                        <SelectItem value="intermediate">Intermediate</SelectItem>
+                        <SelectItem value="advanced">Advanced</SelectItem>
+                        <SelectItem value="expert">Expert</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="targetLevel">Target Level</Label>
+                    <Select
+                      value={newSkill.targetLevel}
+                      onValueChange={(value) => handleSelectChange("targetLevel", value)}
+                    >
+                      <SelectTrigger id="targetLevel">
+                        <SelectValue placeholder="Select level" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="beginner">Beginner</SelectItem>
+                        <SelectItem value="intermediate">Intermediate</SelectItem>
+                        <SelectItem value="advanced">Advanced</SelectItem>
+                        <SelectItem value="expert">Expert</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="relevance">Relevance to Role (%)</Label>
+                  <Input
+                    id="relevance"
+                    name="relevance"
+                    type="number"
+                    min="1"
+                    max="100"
+                    placeholder="85"
+                    value={newSkill.relevance}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setOpenDialog(false)}>
+                  <X className="mr-2 h-4 w-4" />
+                  Cancel
+                </Button>
+                <Button onClick={handleAddSkill}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add Skill
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {isLoading ? (
             // Loading skeletons

@@ -10,7 +10,8 @@ import {
   Menu, 
   X, 
   User,
-  BrainCircuit
+  BrainCircuit,
+  TrendingUp
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -27,6 +28,7 @@ const MainLayout = () => {
     { path: "/skills", label: "Skills Analysis", icon: BrainCircuit },
     { path: "/learning-plan", label: "Learning Plan", icon: GraduationCap },
     { path: "/resources", label: "Resources", icon: BookText },
+    { path: "/trending", label: "Trending Content", icon: TrendingUp },
   ];
 
   const toggleSidebar = () => {

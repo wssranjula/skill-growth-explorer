@@ -9,6 +9,7 @@ import SkillsAnalysis from "./pages/SkillsAnalysis";
 import LearningPlan from "./pages/LearningPlan";
 import Resources from "./pages/Resources";
 import MicroLesson from "./pages/MicroLesson";
+import TrendingContent from "./pages/TrendingContent";
 import NotFound from "./pages/NotFound";
 import MainLayout from "./layouts/MainLayout";
 
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="learning-plan" element={<LearningPlan />} />
             <Route path="resources" element={<Resources />} />
             <Route path="micro-lesson/:id" element={<MicroLesson />} />
+            <Route path="trending" element={<TrendingContent />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
