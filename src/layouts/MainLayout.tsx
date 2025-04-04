@@ -94,8 +94,8 @@ const MainLayout = () => {
           </ul>
         </nav>
         
-        {/* User profile - now at the bottom */}
-        <div className="p-4 border-t border-sidebar-border bg-sidebar-accent/20 mt-auto">
+        {/* User profile - sticky at the bottom */}
+        <div className="p-4 border-t border-sidebar-border bg-sidebar-accent/20 mt-auto sticky bottom-0">
           <div className="flex items-center space-x-3">
             <Avatar className="h-10 w-10 border-2 border-primary/20">
               <AvatarImage src="" />

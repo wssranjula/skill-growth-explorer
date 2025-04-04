@@ -25,13 +25,16 @@ import {
   Database,
   LineChart,
   Zap,
-  LampDesk
+  LampDesk,
+  X
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 
 // Mock data for daily micro-lessons
 const dailyLessons = [
@@ -45,7 +48,8 @@ const dailyLessons = [
     icon: Code,
     color: "text-blue-500",
     badge: "New",
-    hasQuiz: true
+    hasQuiz: true,
+    preview: "React Hooks are a powerful feature introduced in React 16.8 that allow you to use state and lifecycle features without classes."
   },
   {
     id: "ml2",
@@ -57,7 +61,8 @@ const dailyLessons = [
     icon: Database,
     color: "text-green-500",
     badge: "Popular",
-    hasQuiz: true
+    hasQuiz: true,
+    preview: "Database indexing is a technique to optimize the performance of database queries by minimizing disk access when searching for specific data."
   },
   {
     id: "ml3",
@@ -68,7 +73,8 @@ const dailyLessons = [
     completed: false,
     icon: Brain,
     color: "text-purple-500",
-    hasQuiz: false
+    hasQuiz: false,
+    preview: "Model evaluation metrics are crucial for determining how well your machine learning models are performing relative to their objectives."
   },
   {
     id: "ml4",
@@ -79,7 +85,8 @@ const dailyLessons = [
     completed: false,
     icon: Network,
     color: "text-red-500",
-    hasQuiz: true
+    hasQuiz: true,
+    preview: "Network security encompasses the policies, practices, and technologies designed to protect data, systems, and networks from unauthorized access or attacks."
   },
   {
     id: "ml5",
@@ -90,20 +97,14 @@ const dailyLessons = [
     completed: false,
     icon: LineChart,
     color: "text-amber-500",
-    hasQuiz: false
+    hasQuiz: false,
+    preview: "Effective data visualization transforms complex data into intuitive visual representations that reveal insights more easily than raw numbers."
   }
 ];
 
-const MicroLessonsCard = () => {
-  const navigate = useNavigate();
-  const [activeLesson, setActiveLesson] = useState(dailyLessons[0]);
-  const [isLessonOpen, setIsLessonOpen] = useState(false);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [isAnswerSubmitted, setIsAnswerSubmitted] = useState(false);
-
-  // Mock quiz questions
-  const quizQuestions = [
+// Quiz questions for different lessons
+const lessonQuizzes = {
+  ml1: [
     {
       question: "What is the main advantage of using React hooks?",
       options: [
@@ -112,19 +113,59 @@ const MicroLessonsCard = () => {
         { id: "c", text: "They always improve performance" },
         { id: "d", text: "They replace the need for components" }
       ],
-      correctAnswer: "b"
-    },
-    {
-      question: "When should you use the useEffect hook?",
-      options: [
-        { id: "a", text: "Only for API calls" },
-        { id: "b", text: "Never in functional components" },
-        { id: "c", text: "For side effects in your component" },
-        { id: "d", text: "Only once per application" }
-      ],
-      correctAnswer: "c"
+      correctAnswer: "b",
+      explanation: "React hooks allow you to use state and other React features without writing class components, making functional components more powerful."
     }
-  ];
+  ],
+  ml2: [
+    {
+      question: "What is the primary purpose of database indexing?",
+      options: [
+        { id: "a", text: "To validate data before insertion" },
+        { id: "b", text: "To encrypt sensitive information" },
+        { id: "c", text: "To speed up data retrieval operations" },
+        { id: "d", text: "To reduce the size of the database" }
+      ],
+      correctAnswer: "c",
+      explanation: "Database indexing primarily speeds up data retrieval operations by creating data structures that enable faster searches."
+    }
+  ],
+  ml4: [
+    {
+      question: "Which of these is NOT a common network security measure?",
+      options: [
+        { id: "a", text: "Firewalls" },
+        { id: "b", text: "Encryption" },
+        { id: "c", text: "Data compression" },
+        { id: "d", text: "Intrusion detection systems" }
+      ],
+      correctAnswer: "c",
+      explanation: "Data compression is primarily used to reduce file sizes and bandwidth usage, not as a security measure."
+    }
+  ]
+};
+
+const MicroLessonsCard = () => {
+  const navigate = useNavigate();
+  const [activeLesson, setActiveLesson] = useState(dailyLessons[0]);
+  const [isLessonOpen, setIsLessonOpen] = useState(false);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [isAnswerSubmitted, setIsAnswerSubmitted] = useState(false);
+  const [lessonProgress, setLessonProgress] = useState<{[key: string]: number}>({
+    ml1: 0,
+    ml2: 0,
+    ml3: 0,
+    ml4: 0,
+    ml5: 0
+  });
+  const [activeTab, setActiveTab] = useState("all");
+
+  const filteredLessons = activeTab === "all" 
+    ? dailyLessons 
+    : activeTab === "new" 
+      ? dailyLessons.filter(lesson => lesson.badge === "New")
+      : dailyLessons.filter(lesson => lesson.category.toLowerCase().includes(activeTab));
 
   const handleSelectLesson = (lesson: any) => {
     setActiveLesson(lesson);
@@ -132,23 +173,42 @@ const MicroLessonsCard = () => {
     setCurrentQuestion(0);
     setSelectedAnswer(null);
     setIsAnswerSubmitted(false);
+    
+    // Set initial progress if not started
+    if (lessonProgress[lesson.id] === 0) {
+      setLessonProgress({
+        ...lessonProgress,
+        [lesson.id]: 10 // Started
+      });
+    }
+  };
+
+  const handleViewFullLesson = () => {
+    navigate(`/micro-lesson/${activeLesson.id}`);
   };
 
   const handleSubmitAnswer = () => {
     setIsAnswerSubmitted(true);
+    
+    // Update progress
+    setLessonProgress({
+      ...lessonProgress,
+      [activeLesson.id]: 80 // Almost complete
+    });
   };
 
-  const handleNextQuestion = () => {
-    if (currentQuestion < quizQuestions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-      setSelectedAnswer(null);
-      setIsAnswerSubmitted(false);
-    } else {
-      // Quiz completed
-      setIsLessonOpen(false);
-    }
+  const handleCompleteLesson = () => {
+    // Update progress
+    setLessonProgress({
+      ...lessonProgress,
+      [activeLesson.id]: 100 // Complete
+    });
+    
+    // Close lesson view
+    setIsLessonOpen(false);
   };
 
+  const quizQuestions = lessonQuizzes[activeLesson.id as keyof typeof lessonQuizzes] || [];
   const isCorrectAnswer = selectedAnswer === quizQuestions[currentQuestion]?.correctAnswer;
 
   return (
@@ -169,6 +229,17 @@ const MicroLessonsCard = () => {
         </CardDescription>
       </CardHeader>
       
+      <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className={`${isLessonOpen ? 'hidden' : 'block'}`}>
+        <div className="px-4 pt-2">
+          <TabsList className="grid grid-cols-4 w-full">
+            <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="frontend">Frontend</TabsTrigger>
+            <TabsTrigger value="data">Data</TabsTrigger>
+            <TabsTrigger value="new">New</TabsTrigger>
+          </TabsList>
+        </div>
+      </Tabs>
+      
       <Collapsible open={isLessonOpen} onOpenChange={setIsLessonOpen}>
         <CollapsibleContent>
           <CardContent className="p-4">
@@ -186,16 +257,29 @@ const MicroLessonsCard = () => {
                 </Badge>
               </div>
               
-              {activeLesson.hasQuiz && !isAnswerSubmitted && (
+              <div className="bg-accent/5 rounded-md p-4 border mt-2">
+                <p className="text-sm">{activeLesson.preview}</p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="mt-3 text-xs"
+                  onClick={handleViewFullLesson}
+                >
+                  Read full lesson
+                  <ArrowRight className="ml-1 h-3 w-3" />
+                </Button>
+              </div>
+              
+              {activeLesson.hasQuiz && quizQuestions.length > 0 && !isAnswerSubmitted && (
                 <div className="bg-card border rounded-md p-4 mt-4">
                   <h4 className="font-medium mb-3">Quick Quiz</h4>
                   <p className="mb-3">{quizQuestions[currentQuestion].question}</p>
                   
                   <RadioGroup value={selectedAnswer || ""} onValueChange={setSelectedAnswer}>
                     {quizQuestions[currentQuestion].options.map((option) => (
-                      <div key={option.id} className="flex items-center space-x-2 mb-2">
-                        <RadioGroupItem value={option.id} id={option.id} />
-                        <label htmlFor={option.id} className="text-sm">{option.text}</label>
+                      <div key={option.id} className="flex items-center space-x-2 mb-2 p-2 rounded hover:bg-accent/10 cursor-pointer">
+                        <RadioGroupItem value={option.id} id={`${activeLesson.id}-${option.id}`} />
+                        <label htmlFor={`${activeLesson.id}-${option.id}`} className="text-sm cursor-pointer flex-1">{option.text}</label>
                       </div>
                     ))}
                   </RadioGroup>
@@ -220,19 +304,16 @@ const MicroLessonsCard = () => {
                       </>
                     ) : (
                       <>
-                        <XCircle className="h-5 w-5 mr-2" />
+                        <X className="h-5 w-5 mr-2" />
                         <p className="font-medium">Not quite right</p>
                       </>
                     )}
                   </div>
                   <p className="text-sm">
-                    {isCorrectAnswer 
-                      ? "Great job! You've got the right answer." 
-                      : `The correct answer is "${quizQuestions[currentQuestion].options.find(o => o.id === quizQuestions[currentQuestion].correctAnswer)?.text}".`
-                    }
+                    {quizQuestions[currentQuestion].explanation}
                   </p>
-                  <Button className="mt-3" onClick={handleNextQuestion}>
-                    {currentQuestion < quizQuestions.length - 1 ? "Next Question" : "Complete Lesson"}
+                  <Button className="mt-3" onClick={handleCompleteLesson}>
+                    Complete Lesson
                   </Button>
                 </div>
               )}
@@ -243,10 +324,13 @@ const MicroLessonsCard = () => {
         <CardContent className={`p-0 ${isLessonOpen ? 'hidden' : 'block'}`}>
           <ScrollArea className="h-[280px]">
             <div className="p-4 space-y-3">
-              {dailyLessons.map((lesson) => (
+              {filteredLessons.map((lesson) => (
                 <div 
                   key={lesson.id} 
-                  className="flex items-start space-x-3 p-3 rounded-lg hover:bg-accent cursor-pointer border transition-colors"
+                  className={cn(
+                    "flex items-start space-x-3 p-3 rounded-lg cursor-pointer border transition-colors",
+                    lessonProgress[lesson.id] === 100 ? "border-green-200 bg-green-50 dark:bg-green-900/10 dark:border-green-800/30" : "hover:bg-accent"
+                  )}
                   onClick={() => handleSelectLesson(lesson)}
                 >
                   <div className={`p-2 rounded-md ${lesson.color} bg-opacity-10`}>
@@ -255,7 +339,12 @@ const MicroLessonsCard = () => {
                   
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <h3 className="font-medium text-sm truncate">{lesson.title}</h3>
+                      <h3 className="font-medium text-sm truncate flex items-center">
+                        {lesson.title}
+                        {lessonProgress[lesson.id] === 100 && (
+                          <CheckCircle2 className="ml-1.5 h-3.5 w-3.5 text-green-500" />
+                        )}
+                      </h3>
                       {lesson.badge && (
                         <Badge variant="outline" className="text-xs">{lesson.badge}</Badge>
                       )}
@@ -263,15 +352,23 @@ const MicroLessonsCard = () => {
                     <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
                       {lesson.description}
                     </p>
-                    <div className="flex items-center mt-1.5 text-xs text-muted-foreground">
-                      <Clock className="h-3 w-3 mr-1" />
-                      <span>{lesson.duration} min</span>
-                      {lesson.hasQuiz && (
-                        <>
-                          <span className="mx-1.5">•</span>
-                          <Award className="h-3 w-3 mr-1" />
-                          <span>Quiz</span>
-                        </>
+                    <div className="mt-1.5 space-y-1">
+                      <div className="flex items-center text-xs text-muted-foreground">
+                        <Clock className="h-3 w-3 mr-1" />
+                        <span>{lesson.duration} min</span>
+                        {lesson.hasQuiz && (
+                          <>
+                            <span className="mx-1.5">•</span>
+                            <Award className="h-3 w-3 mr-1" />
+                            <span>Quiz</span>
+                          </>
+                        )}
+                      </div>
+                      
+                      {lessonProgress[lesson.id] > 0 && (
+                        <div className="w-full">
+                          <Progress value={lessonProgress[lesson.id]} className="h-1" />
+                        </div>
                       )}
                     </div>
                   </div>
@@ -299,23 +396,5 @@ const MicroLessonsCard = () => {
     </Card>
   );
 };
-
-// Define XCircle component as it was used but not imported
-const XCircle = ({ className }: { className?: string }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
-    className={className}
-  >
-    <circle cx="12" cy="12" r="10" />
-    <path d="m15 9-6 6" />
-    <path d="m9 9 6 6" />
-  </svg>
-);
 
 export default MicroLessonsCard;
