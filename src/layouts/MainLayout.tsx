@@ -58,8 +58,44 @@ const MainLayout = () => {
           sidebarOpen ? "left-0" : "-left-64"
         )}
       >
-        {/* User profile - now at the top */}
-        <div className="p-4 border-b border-sidebar-border bg-sidebar-accent/20">
+        {/* Brand */}
+        <div className="flex items-center p-4 h-16">
+          <BookOpen className="h-7 w-7 text-primary mr-2" />
+          <h1 className="text-xl font-bold text-primary">SkillGrowth</h1>
+        </div>
+        
+        <Separator />
+        
+        {/* Navigation */}
+        <nav className="flex-1 py-4 px-2 overflow-y-auto">
+          <ul className="space-y-1">
+            {navItems.map((item) => (
+              <li key={item.path}>
+                <Button
+                  variant={location.pathname === item.path ? "default" : "ghost"}
+                  className={cn(
+                    "w-full justify-start",
+                    location.pathname === item.path
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                  )}
+                  onClick={() => {
+                    navigate(item.path);
+                    if (window.innerWidth < 768) {
+                      setSidebarOpen(false);
+                    }
+                  }}
+                >
+                  <item.icon className="mr-2 h-5 w-5" />
+                  {item.label}
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        
+        {/* User profile - now at the bottom */}
+        <div className="p-4 border-t border-sidebar-border bg-sidebar-accent/20 mt-auto">
           <div className="flex items-center space-x-3">
             <Avatar className="h-10 w-10 border-2 border-primary/20">
               <AvatarImage src="" />
@@ -102,42 +138,6 @@ const MainLayout = () => {
             </Badge>
           </div>
         </div>
-        
-        {/* Brand */}
-        <div className="flex items-center p-4 h-16">
-          <BookOpen className="h-7 w-7 text-primary mr-2" />
-          <h1 className="text-xl font-bold text-primary">SkillGrowth</h1>
-        </div>
-        
-        <Separator />
-        
-        {/* Navigation */}
-        <nav className="flex-1 py-4 px-2 overflow-y-auto">
-          <ul className="space-y-1">
-            {navItems.map((item) => (
-              <li key={item.path}>
-                <Button
-                  variant={location.pathname === item.path ? "default" : "ghost"}
-                  className={cn(
-                    "w-full justify-start",
-                    location.pathname === item.path
-                      ? "bg-primary text-primary-foreground"
-                      : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                  )}
-                  onClick={() => {
-                    navigate(item.path);
-                    if (window.innerWidth < 768) {
-                      setSidebarOpen(false);
-                    }
-                  }}
-                >
-                  <item.icon className="mr-2 h-5 w-5" />
-                  {item.label}
-                </Button>
-              </li>
-            ))}
-          </ul>
-        </nav>
       </div>
 
       {/* Main content */}

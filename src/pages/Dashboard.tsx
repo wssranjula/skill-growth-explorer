@@ -61,6 +61,18 @@ const Dashboard = () => {
     .sort(() => Math.random() - 0.5)
     .slice(0, 3);
 
+  // Calculate progress percentage for each skill based on current level vs target level
+  const calculateSkillProgress = (skill) => {
+    const levels = ["beginner", "intermediate", "advanced", "expert"];
+    const currentIndex = levels.indexOf(skill.currentLevel);
+    const targetIndex = levels.indexOf(skill.targetLevel);
+    
+    if (targetIndex <= currentIndex) return 100;
+    
+    // Calculate progress as percentage of the way from current to target
+    return Math.round((currentIndex / targetIndex) * 100);
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-6 rounded-lg mb-6">
@@ -145,7 +157,9 @@ const Dashboard = () => {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {prioritySkills?.map(skill => (
+                  {prioritySkills?.map(skill => {
+                    const progressValue = calculateSkillProgress(skill);
+                    return (
                     <div key={skill.id} className="flex items-center space-x-4 p-3 rounded-lg border hover:bg-accent/50 transition-colors">
                       <div className="flex-grow">
                         <div className="flex items-center justify-between">
@@ -164,16 +178,16 @@ const Dashboard = () => {
                         <div className="mt-2">
                           <div className="flex justify-between text-xs mb-1">
                             <span>Progress</span>
-                            <span>{skill.progress}%</span>
+                            <span>{progressValue}%</span>
                           </div>
-                          <Progress value={skill.progress} className="h-2" />
+                          <Progress value={progressValue} className="h-2" />
                         </div>
                       </div>
                       <Button variant="outline" size="sm" onClick={() => navigate("/skills")}>
                         Details
                       </Button>
                     </div>
-                  ))}
+                  )})}
                 </div>
               )}
             </CardContent>
