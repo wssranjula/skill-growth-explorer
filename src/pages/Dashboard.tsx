@@ -155,27 +155,106 @@ const Dashboard = () => {
       </div>
 
       {/* Main content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left column */}
-    
+      <div className="min-h-screen p-6">
+        {/* Header section */}
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground">Track your learning progress and explore recommended resources.</p>
+        </div>
 
-        {/* Right column */}
-        <div className="space-y-6">
+        {/* Main content - Two rows layout */}
+        <div className="grid gap-6 h-[calc(100vh-12rem)]">
+          {/* First row - Two columns */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Weekly Progress */}
-          <WeeklyProgressChart
-            weeklyProgress={progressData?.weeklyProgress || Array(7).fill(0)}
-            weeklyTarget={70}
-          />
+          <div className="h-full">
+            <div className="h-full rounded-lg bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 overflow-hidden relative">
+              {/* Blue gradient border on top */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 via-blue-600 to-blue-800" />
+              
+              <div className="p-6 space-y-4">
+                {/* Header */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                      <BarChart3 className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold">Weekly Progress Overview</h3>
+                      <p className="text-sm text-muted-foreground">Track your learning momentum</p>
+                    </div>
+                  </div>
+                  <Badge variant="secondary" className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300">
+                    This Week
+                  </Badge>
+                </div>
+
+                {/* Chart */}
+                <div className="pt-4">
+                  <WeeklyProgressChart
+                    weeklyProgress={progressData?.weeklyProgress || Array(7).fill(0)}
+                    weeklyTarget={70}
+                  />
+                </div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Weekly Target</p>
+                    <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">70%</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-muted-foreground">Current Progress</p>
+                    <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                      {Math.round((progressData?.weeklyProgress?.reduce((a, b) => a + b, 0) || 0) / 7)}%
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* Your Learning Journey */}
-          <ClimbingProgress 
-            totalPoints={totalPoints}
-            maxPoints={maxPoints}
-            progressPercentage={progressPercentage}
-          />
+          <div className="h-full">
+            <div className="h-full rounded-lg bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 overflow-hidden relative">
+              {/* Yellow gradient border on top */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600" />
+              
+              <div className="p-6 space-y-4">
+                {/* Header */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                      <Trophy className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold">Learning Journey</h3>
+                      <p className="text-sm text-muted-foreground">Climb your way to track your progress</p>
+                    </div>
+                  </div>
+                  <Badge variant="secondary" className="bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-300">
+                    Level {Math.floor(progressPercentage / 20) + 1}
+                  </Badge>
+                </div>
 
-          {/* Recommended Resources */}
-          <Card className="shadow-md">
+                {/* Climbing Progress */}
+                <div className="pt-4">
+                  <ClimbingProgress 
+                    totalPoints={totalPoints}
+                    maxPoints={maxPoints}
+                    progressPercentage={progressPercentage}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          </div>
+
+          {/* Second row - Full width */}
+          <div className="h-full">
+            <Card className="shadow-md h-full">
+
             <CardHeader className="bg-purple-50/50 dark:bg-purple-900/10 rounded-t-lg border-b pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
@@ -226,6 +305,7 @@ const Dashboard = () => {
               </Button>
             </CardFooter>
           </Card>
+          </div>
         </div>
       </div>
     </div>

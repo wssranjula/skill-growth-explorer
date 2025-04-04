@@ -31,17 +31,11 @@ export const WeeklyProgressChart: React.FC<WeeklyProgressChartProps> = ({ weekly
 
   return (
     <Card className="bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 shadow-xl">
-      <CardHeader className="pb-2 border-b border-gray-100 dark:border-gray-800">
-        <CardTitle className="text-lg font-medium flex items-center gap-2">
-          <Trophy className="h-5 w-5 text-yellow-500" />
-          Weekly Progress Overview
-        </CardTitle>
-      </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
           {/* Donut Chart */}
           <div className="flex flex-col items-center justify-center p-4">
-            <div className="w-72 h-72 relative mt-2"> {/* Increased size for better visibility */}
+            <div className="w-80 h-80 relative mt-2"> {/* Increased size for better visibility */}
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <defs>
@@ -58,8 +52,8 @@ export const WeeklyProgressChart: React.FC<WeeklyProgressChartProps> = ({ weekly
                     data={data}
                     cx="50%"
                     cy="50%"
-                    innerRadius={55}
-                    outerRadius={75}
+                    innerRadius={65}
+                    outerRadius={85}
                     startAngle={90}
                     endAngle={-270}
                     paddingAngle={4}
@@ -96,11 +90,11 @@ export const WeeklyProgressChart: React.FC<WeeklyProgressChartProps> = ({ weekly
                 </PieChart>
               </ResponsiveContainer>
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full p-6 shadow-lg ring-1 ring-gray-100 dark:ring-gray-700">
-                  <span className="text-4xl font-bold bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent">
+                <div className="text-center w-32"> {/* Fixed width for better centering */}
+                  <span className="text-2xl font-bold bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent block mb-1">
                     {averageProgress}%
                   </span>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mt-1">Weekly Average</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Weekly Average</p>
                 </div>
               </div>
             </div>
