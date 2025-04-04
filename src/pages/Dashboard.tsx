@@ -157,76 +157,7 @@ const Dashboard = () => {
       {/* Main content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left column */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Micro Lessons Card - New component */}
-          <MicroLessonsCard />
-          
-          {/* Priority Skills */}
-          <Card className="shadow-md">
-            <CardHeader className="bg-blue-50/50 dark:bg-blue-900/10 rounded-t-lg border-b pb-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <Target className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />
-                  <CardTitle className="text-lg">Priority Skills</CardTitle>
-                </div>
-                <Badge variant="outline" className="bg-blue-100/80 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 gap-1 items-center">
-                  <Sparkles className="h-3 w-3" /> Focus Areas
-                </Badge>
-              </div>
-              <CardDescription>
-                Skills that need your attention based on analysis
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-4">
-              {isSkillsLoading ? (
-                <div className="space-y-4">
-                  {[...Array(3)].map((_, i) => (
-                    <Skeleton key={i} className="h-20 w-full" />
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {prioritySkills?.map(skill => (
-                    <div key={skill.id} className="flex items-center space-x-4 p-3 rounded-lg border hover:bg-accent/50 transition-colors">
-                      <div className="flex-grow">
-                        <div className="flex items-center justify-between">
-                          <h3 className="font-medium">{skill.name}</h3>
-                          <Badge variant="outline">{skill.category}</Badge>
-                        </div>
-                        <div className="flex items-center mt-1 text-sm">
-                          <span className={`${getSkillLevelColor(skill.currentLevel)}`}>
-                            {getSkillLevelText(skill.currentLevel)}
-                          </span>
-                          <ArrowRight className="h-3 w-3 mx-2 text-muted-foreground" />
-                          <span className={`${getSkillLevelColor(skill.targetLevel)}`}>
-                            {getSkillLevelText(skill.targetLevel)}
-                          </span>
-                        </div>
-                        <div className="mt-2">
-                          <div className="flex justify-between text-xs mb-1">
-                            <span>Progress</span>
-                            <span>{calculateSkillProgress(skill)}%</span>
-                          </div>
-                          <Progress value={calculateSkillProgress(skill)} className="h-2" />
-                        </div>
-                      </div>
-                      <div className="mt-4">
-                        <Button variant="outline" size="sm" onClick={() => navigate("/skills")}>
-                          Details
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-            <CardFooter className="pt-0 pb-4 px-4">
-              <Button variant="outline" className="w-full" onClick={() => navigate("/skills")}>
-                View All Skills
-              </Button>
-            </CardFooter>
-          </Card>
-        </div>
+    
 
         {/* Right column */}
         <div className="space-y-6">
