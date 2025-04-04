@@ -1,10 +1,10 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
+import { QuickLearning } from "./pages/QuickLearning";
 import SkillsAnalysis from "./pages/SkillsAnalysis";
 import LearningPlan from "./pages/LearningPlan";
 import Resources from "./pages/Resources";
@@ -24,6 +24,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<MainLayout />}>
             <Route index element={<Dashboard />} />
+            <Route path="quick-learning" element={<QuickLearning />} />
             <Route path="skills" element={<SkillsAnalysis />} />
             <Route path="learning-plan" element={<LearningPlan />} />
             <Route path="resources" element={<Resources />} />
@@ -38,3 +39,4 @@ const App = () => (
 );
 
 export default App;
+

@@ -33,6 +33,7 @@ const MainLayout = () => {
     { path: "/learning-plan", label: "Learning Plan", icon: GraduationCap },
     { path: "/resources", label: "Resources", icon: BookText },
     { path: "/trending", label: "Trending Content", icon: TrendingUp },
+    { path: "/quick-learning", label: "Quick Learning", icon: TrendingUp },
   ];
 
   const toggleSidebar = () => {
