@@ -18,7 +18,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { cn } from "@/lib/utils";
 import { ClimbingProgress } from "@/components/ClimbingProgress";
-import { WeeklyProgressChart } from "@/components/WeeklyProgressChart";
+import { SkillCourseProgress } from "@/components/SkillCourseProgress";
 import { 
   BookOpen, 
   BarChart3, 
@@ -113,14 +113,54 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="bg-gradient-to-r from-primary/20 via-primary/10 to-transparent p-8 rounded-xl shadow-sm mb-6 border border-primary/10">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-4xl font-bold text-gray-800 mb-2">Welcome back, Alex!</h1>
-            <p className="text-gray-500">Keep up the good work! You're making progress every day.</p>
+    <div className="mb-6 rounded-2xl shadow-lg overflow-hidden">
+      {/* Styled section only for the welcome message */}
+      <div className="relative">
+        {/* Background gradient limited to this section */}
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-800 via-purple-800 to-pink-500 opacity-90"></div>
+        
+        {/* Abstract background pattern */}
+        <div className="absolute inset-0 opacity-20" 
+             style={{
+               backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E")`,
+               backgroundSize: '120px'
+             }}></div>
+        
+        {/* Bottom wave */}
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="w-full">
+            <path fill="#ffffff" fill-opacity="0.2" d="M0,160L48,138.7C96,117,192,75,288,74.7C384,75,480,117,576,160C672,203,768,245,864,229.3C960,213,1056,139,1152,117.3C1248,96,1344,128,1392,144L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+          </svg>
+        </div>
+        
+        {/* Content with glass effect */}
+        <div className="relative p-8 backdrop-blur-sm">
+          <div className="flex items-center">
+            <div className="flex-1">
+              <div className="flex items-center mb-2">
+                <div className="h-3 w-3 rounded-full bg-green-400 mr-2 animate-pulse"></div>
+                <span className="text-white text-sm font-medium tracking-wider uppercase">Premium Account</span>
+              </div>
+              
+              <h1 className="text-4xl font-bold text-white tracking-tight">
+                Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-yellow-400">Alex!</span>
+              </h1>
+              
+              <p className="text-white/80 mt-2">
+                Keep up the good work! You're making progress every day.
+              </p>
+            </div>
+            
+            <div className="hidden md:block">
+              <div className="relative h-20 w-20">
+                
+              </div>
+            </div>
           </div>
         </div>
       </div>
+    </div>
+ 
 
       {/* Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -177,39 +217,24 @@ const Dashboard = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                      <BarChart3 className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                      <BookOpen className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold">Weekly Progress Overview</h3>
-                      <p className="text-sm text-muted-foreground">Track your learning momentum</p>
+                      <h3 className="text-lg font-semibold">Skills Course Progress</h3>
+                      <p className="text-sm text-muted-foreground">Track your course completion by skill</p>
                     </div>
                   </div>
                   <Badge variant="secondary" className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300">
-                    This Week
+                    Courses
                   </Badge>
                 </div>
 
                 {/* Chart */}
                 <div className="pt-4">
-                  <WeeklyProgressChart
-                    weeklyProgress={progressData?.weeklyProgress || Array(7).fill(0)}
-                    weeklyTarget={70}
-                  />
+                  <SkillCourseProgress />
                 </div>
 
-                {/* Stats */}
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-100 dark:border-gray-700">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Weekly Target</p>
-                    <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">70%</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-muted-foreground">Current Progress</p>
-                    <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                      {Math.round((progressData?.weeklyProgress?.reduce((a, b) => a + b, 0) || 0) / 7)}%
-                    </p>
-                  </div>
-                </div>
+              
               </div>
             </div>
           </div>

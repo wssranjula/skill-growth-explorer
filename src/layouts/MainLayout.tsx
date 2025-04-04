@@ -13,7 +13,8 @@ import {
   BrainCircuit,
   TrendingUp,
   ChevronDown,
-  Bell
+  Bell,
+  CloudLightning
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -33,7 +34,7 @@ const MainLayout = () => {
     { path: "/learning-plan", label: "Learning Plan", icon: GraduationCap },
     { path: "/resources", label: "Resources", icon: BookText },
     { path: "/trending", label: "Trending Content", icon: TrendingUp },
-    { path: "/quick-learning", label: "Quick Learning", icon: TrendingUp },
+    { path: "/quick-learning", label: "Quick Learning", icon: CloudLightning },
   ];
 
   const toggleSidebar = () => {

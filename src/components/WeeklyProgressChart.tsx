@@ -1,24 +1,22 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, RadialBar } from 'recharts';
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Trophy } from 'lucide-react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 
 interface WeeklyProgressChartProps {
   weeklyProgress: number[];
   weeklyTarget: number;
 }
 
-export const WeeklyProgressChart: React.FC<WeeklyProgressChartProps> = ({ weeklyProgress, weeklyTarget }) => {
+export const WeeklyProgressChart = ({ weeklyProgress, weeklyTarget }: WeeklyProgressChartProps) => {
   // Calculate average progress
-  const averageProgress = Math.round(
-    weeklyProgress.reduce((acc, curr) => acc + curr, 0) / weeklyProgress.length
-  );
-
-  // Data for donut chart
+  const averageProgress = Math.round(weeklyProgress.reduce((a, b) => a + b, 0) / 7);
+  
+  // Data for the donut chart
   const data = [
-    { name: 'Progress', value: averageProgress },
-    { name: 'Remaining', value: Math.max(0, 100 - averageProgress) }
+    { name: 'Progress', value: averageProgress, fill: 'url(#progressGradient)' },
+    { name: 'Remaining', value: 100 - averageProgress, fill: 'url(#remainingGradient)' },
   ];
 
   // Premium gradient colors
@@ -58,21 +56,15 @@ export const WeeklyProgressChart: React.FC<WeeklyProgressChartProps> = ({ weekly
                     endAngle={-270}
                     paddingAngle={4}
                     dataKey="value"
-                    strokeWidth={2}
-                    stroke="#ffffff"
                   >
                     {data.map((entry, index) => (
-                      <Cell 
-                        key={`cell-${index}`} 
-                        fill={`url(#${index === 0 ? 'progressGradient' : 'remainingGradient'})`}
-                        className="drop-shadow-lg"
-                      />
+                      <Cell key={`cell-${index}`} fill={entry.fill} />
                     ))}
                   </Pie>
-                  <Tooltip 
-                    formatter={(value) => `${value}%`}
+                  <Tooltip
+                    formatter={(value) => [`${value}%`, '']}
                     contentStyle={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                      backgroundColor: 'rgba(255, 255, 255, 0.8)',
                       borderRadius: '8px',
                       padding: '8px 12px',
                       border: 'none',
@@ -109,16 +101,19 @@ export const WeeklyProgressChart: React.FC<WeeklyProgressChartProps> = ({ weekly
                   <span className="font-medium text-gray-700 dark:text-gray-200">
                     {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][index]}
                   </span>
-                  <span className="font-medium text-gray-900 dark:text-white">{progress}%</span>
+                  <span className="text-gray-500 dark:text-gray-400">{progress}%</span>
                 </div>
-                <div className="relative">
-                  <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full transition-all duration-500 ease-out rounded-full bg-gradient-to-r from-green-500 to-emerald-600" 
-                      style={{ width: `${progress}%` }}
-                    />
+                <Progress 
+                  value={progress} 
+                  className={`h-2 ${progress >= weeklyTarget ? "[&>div]:bg-green-500" : "[&>div]:bg-blue-500"}`}
+                />
+                {progress >= weeklyTarget && (
+                  <div className="flex justify-end">
+                    <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                      Target Met
+                    </Badge>
                   </div>
-                </div>
+                )}
               </div>
             ))}
           </div>
