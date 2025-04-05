@@ -220,10 +220,21 @@ const TrendingContent = () => {
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
           <div>
             <div className="flex items-center mb-2">
-              <TrendingUp className="h-6 w-6 text-primary mr-2" />
-              <h1 className="text-3xl font-bold tracking-tight">Trending Content</h1>
+              <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 mr-3">
+                <TrendingUp className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight">
+                  Trending <span className="text-primary">Content</span>
+                </h1>
+                <div className="flex items-center mt-1">
+                  <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 mr-2">
+                    AI Recommended
+                  </Badge>
+                </div>
+              </div>
             </div>
-            <p className="text-muted-foreground max-w-2xl">
+            <p className="text-muted-foreground max-w-2xl ml-13">
               Stay updated with the latest trends and resources in your field. 
               Our AI constantly analyzes thousands of resources to bring you the most relevant content.
             </p>
@@ -289,7 +300,9 @@ const TrendingContent = () => {
           {filteredBlogs.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredBlogs.map((blog) => (
-                <Card key={blog.id} className="overflow-hidden transition-all duration-300 hover:shadow-md hover:translate-y-[-2px]">
+                <Card key={blog.id} className="relative overflow-hidden transition-all duration-300 hover:shadow-md hover:translate-y-[-2px]">
+                  {/* Decorative accent - blue line at the top */}
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-blue-500"></div>
                   <CardHeader className="pb-3 border-b">
                     <div className="flex justify-between items-start">
                       <div className="space-y-1">
@@ -407,7 +420,9 @@ const TrendingContent = () => {
           {filteredVideos.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredVideos.map((video) => (
-                <Card key={video.id} className="overflow-hidden transition-all duration-300 hover:shadow-md hover:translate-y-[-2px]">
+                <Card key={video.id} className="relative overflow-hidden transition-all duration-300 hover:shadow-md hover:translate-y-[-2px]">
+                  {/* Decorative accent - blue line at the top */}
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-blue-500"></div>
                   <div className="relative group">
                     <AspectRatio ratio={16 / 9}>
                       <img 
@@ -493,7 +508,9 @@ const TrendingContent = () => {
           {filteredResearch.length > 0 ? (
             <div className="grid grid-cols-1 gap-6">
               {filteredResearch.map((paper) => (
-                <Card key={paper.id} className="transition-all duration-300 hover:shadow-md hover:border-primary/20">
+                <Card key={paper.id} className="relative transition-all duration-300 hover:shadow-md hover:border-primary/20">
+                  {/* Decorative accent - blue line at the top */}
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-blue-500"></div>
                   <CardHeader>
                     <div className="flex justify-between">
                       <CardTitle className="text-xl">{paper.title}</CardTitle>

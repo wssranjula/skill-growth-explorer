@@ -165,10 +165,10 @@ const Dashboard = () => {
       {/* Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard
-          title="Skills in Progress"
-          value={isSkillsLoading ? null : skills?.length || 0}
+          title="Skills Completed"
+          value={isProgressLoading ? null : progressData?.skillsCompleted || 0}
           icon={BarChart3}
-          description="Skills being developed"
+          description="Skills fully developed"
           color="bg-blue-100 text-blue-700"
         />
         <MetricCard

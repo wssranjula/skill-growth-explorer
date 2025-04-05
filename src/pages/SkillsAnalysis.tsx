@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   useSkills, 
@@ -32,7 +32,9 @@ import {
   AlertCircle,
   X,
   GraduationCap,
-  Trophy
+  Trophy,
+  Target,
+  Star
 } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -45,7 +47,7 @@ const SkillsAnalysis = () => {
   const { data: skills, isLoading } = useSkills();
   const { data: microLessons } = useMicroLessons();
   const { data: learningItems } = useLearningItems();
-  const [openDialog, setOpenDialog] = useState(false);
+  const [prioritizedSkills, setPrioritizedSkills] = useState<string[]>([]);
   const [newSkill, setNewSkill] = useState({
     name: "",
     category: "",
@@ -120,18 +122,21 @@ const SkillsAnalysis = () => {
     });
   };
 
-  const handleAddSkill = () => {
-    // This would normally call an API to add the skill
-    toast.success(`Skill "${newSkill.name}" added successfully`);
-    setOpenDialog(false);
-    setNewSkill({
-      name: "",
-      category: "",
-      currentLevel: "beginner",
-      targetLevel: "intermediate",
-      relevance: 85,
+  // Sort skills to show prioritized ones first
+  const sortedSkills = useMemo(() => {
+    if (!skills) return [];
+    return [...skills].sort((a, b) => {
+      // Prioritized skills come first
+      const aPrioritized = prioritizedSkills.includes(a.id);
+      const bPrioritized = prioritizedSkills.includes(b.id);
+      
+      if (aPrioritized && !bPrioritized) return -1;
+      if (!aPrioritized && bPrioritized) return 1;
+      
+      // Then sort by relevance
+      return b.relevance - a.relevance;
     });
-  };
+  }, [skills, prioritizedSkills]);
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -233,103 +238,10 @@ const SkillsAnalysis = () => {
             </div>
             <h2 className="text-xl font-semibold text-gray-800">Your Skills</h2>
           </div>
-          <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-            <DialogTrigger asChild>
-              <Button size="sm" className="bg-primary hover:bg-primary/90 shadow-sm">
-                <Plus className="mr-2 h-4 w-4" />
-                Add New Skill
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Add New Skill</DialogTitle>
-                <DialogDescription>
-                  Track a new skill you want to develop or showcase on your profile.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="name">Skill Name</Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    placeholder="e.g. TypeScript, Machine Learning"
-                    value={newSkill.name}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="category">Category</Label>
-                  <Input
-                    id="category"
-                    name="category"
-                    placeholder="e.g. Programming, Design"
-                    value={newSkill.category}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="currentLevel">Current Level</Label>
-                    <Select
-                      value={newSkill.currentLevel}
-                      onValueChange={(value) => handleSelectChange("currentLevel", value)}
-                    >
-                      <SelectTrigger id="currentLevel">
-                        <SelectValue placeholder="Select level" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="beginner">Beginner</SelectItem>
-                        <SelectItem value="intermediate">Intermediate</SelectItem>
-                        <SelectItem value="advanced">Advanced</SelectItem>
-                        <SelectItem value="expert">Expert</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="targetLevel">Target Level</Label>
-                    <Select
-                      value={newSkill.targetLevel}
-                      onValueChange={(value) => handleSelectChange("targetLevel", value)}
-                    >
-                      <SelectTrigger id="targetLevel">
-                        <SelectValue placeholder="Select level" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="beginner">Beginner</SelectItem>
-                        <SelectItem value="intermediate">Intermediate</SelectItem>
-                        <SelectItem value="advanced">Advanced</SelectItem>
-                        <SelectItem value="expert">Expert</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="relevance">Relevance to Role (%)</Label>
-                  <Input
-                    id="relevance"
-                    name="relevance"
-                    type="number"
-                    min="1"
-                    max="100"
-                    placeholder="85"
-                    value={newSkill.relevance}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setOpenDialog(false)}>
-                  <X className="mr-2 h-4 w-4" />
-                  Cancel
-                </Button>
-                <Button onClick={handleAddSkill} className="bg-primary hover:bg-primary/90">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Skill
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <div className="flex items-center text-sm text-gray-500">
+            <Target className="h-4 w-4 mr-1 text-red-500" />
+            <span>Click star icon on a skill to prioritize it</span>
+          </div>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
@@ -346,16 +258,47 @@ const SkillsAnalysis = () => {
               </Card>
             ))
           ) : (
-            // Actual skills cards
-            skills?.map((skill) => (
+            // Actual skills cards sorted with prioritized skills first
+            sortedSkills.map((skill) => (
               <Card 
                 key={skill.id} 
-                className="skill-card border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer hover:border-primary/20"
+                className="skill-card border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer hover:border-primary/20 relative overflow-hidden"
                 onClick={() => navigate(`/learning-plan?skill=${skill.id}`)}
               >
+                {/* No separate toggle button anymore */}
+                
+                {/* Prioritized indicator */}
+                {prioritizedSkills.includes(skill.id) && (
+                  <div className="absolute top-0 left-0 w-0 h-0 border-t-[40px] border-r-[40px] border-t-red-500 border-r-transparent z-10">
+                    <div className="absolute top-[8px] left-[8px]">
+                      <Target className="h-4 w-4 text-white" />
+                    </div>
+                  </div>
+                )}
                 <CardContent className="p-6">
                   <div className="flex justify-between items-start mb-4">
-                    <h3 className="font-semibold text-lg text-gray-800">{skill.name}</h3>
+                    <div className="flex items-center">
+                      <h3 className="font-semibold text-lg text-gray-800">{skill.name}</h3>
+                      <div 
+                        className="ml-2 cursor-pointer p-1 rounded-full hover:bg-gray-100 transition-colors"
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent card click navigation
+                          if (prioritizedSkills.includes(skill.id)) {
+                            setPrioritizedSkills(prioritizedSkills.filter(id => id !== skill.id));
+                            toast.success(`${skill.name} removed from priorities`);
+                          } else {
+                            setPrioritizedSkills([...prioritizedSkills, skill.id]);
+                            toast.success(`${skill.name} added to priorities`);
+                          }
+                        }}
+                      >
+                        {prioritizedSkills.includes(skill.id) ? (
+                          <Star className="h-5 w-5 text-amber-500 fill-amber-500" />
+                        ) : (
+                          <Star className="h-5 w-5 text-gray-400" />
+                        )}
+                      </div>
+                    </div>
                     <Badge className="bg-primary/10 hover:bg-primary/20 text-primary border-primary/10">{skill.category}</Badge>
                   </div>
                   

@@ -49,11 +49,31 @@ const Resources = () => {
   
   return (
     <div className="space-y-6 animate-fade-in">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Learning Resources</h1>
-        <p className="text-muted-foreground">
-          Browse curated resources to deepen your skills
-        </p>
+      {/* Content Container */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left Column - Title and Description */}
+        <div className="lg:col-span-7 space-y-4">
+          <div className="flex items-center space-x-3">
+            <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 border border-primary/20">
+              <BookOpen className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-4xl font-bold tracking-tight">
+                Learning <span className="text-primary">Resources</span>
+              </h1>
+              <div className="flex items-center mt-1">
+                <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 mr-2">
+                  Curated Content
+                </Badge>
+                <span className="text-sm text-muted-foreground">Updated today</span>
+              </div>
+            </div>
+          </div>
+          
+          <p className="text-lg text-muted-foreground pl-14">
+            Browse curated resources to deepen your skills
+          </p>
+        </div>
       </div>
 
       {/* Filters and search */}
@@ -107,7 +127,9 @@ const Resources = () => {
       </Card>
 
       {/* Resources */}
-      <Card>
+      <Card className="relative overflow-hidden">
+        {/* Decorative accent - blue line at the top */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-blue-500"></div>
         <CardHeader>
           <CardTitle className="flex items-center">
             <BookText className="mr-2 h-5 w-5 text-primary" />

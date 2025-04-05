@@ -213,20 +213,29 @@ const MicroLessonsCard = () => {
 
   return (
     <Card className="shadow-md">
-      <CardHeader className="bg-primary/5 rounded-t-lg border-b pb-3">
+      <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <Zap className="mr-2 h-5 w-5 text-primary" />
-            <CardTitle className="text-lg">Daily Micro-Lessons</CardTitle>
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 border border-primary/20">
+              <Zap className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight">
+                Daily <span className="text-primary">Micro-Lessons</span>
+              </h2>
+              <div className="flex items-center mt-1">
+                <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 mr-2">
+                  <LampDesk className="h-3 w-3 mr-1" /> 
+                  Quick Learning
+                </Badge>
+                <span className="text-sm text-muted-foreground">5-minute lessons</span>
+              </div>
+            </div>
           </div>
-          <Badge variant="outline" className="bg-primary/10 gap-1 items-center">
-            <LampDesk className="h-3 w-3" /> 
-            Quick Learning
-          </Badge>
         </div>
-        <CardDescription>
-          Build your skills with these 5-minute focused lessons
-        </CardDescription>
+        <p className="text-muted-foreground mt-3 pl-16">
+          Build your skills with these focused lessons designed for daily practice
+        </p>
       </CardHeader>
       
       <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className={`${isLessonOpen ? 'hidden' : 'block'}`}>
@@ -329,7 +338,7 @@ const MicroLessonsCard = () => {
                   key={lesson.id} 
                   className={cn(
                     "flex items-start space-x-3 p-3 rounded-lg cursor-pointer border transition-colors",
-                    lessonProgress[lesson.id] === 100 ? "border-green-200 bg-green-50 dark:bg-green-900/10 dark:border-green-800/30" : "hover:bg-accent"
+                    lessonProgress[lesson.id] === 100 ? "border-green-200 bg-green-50 dark:bg-green-900/10 dark:border-green-800/30" : "hover:bg-blue-50/50 hover:border-blue-100"
                   )}
                   onClick={() => handleSelectLesson(lesson)}
                 >

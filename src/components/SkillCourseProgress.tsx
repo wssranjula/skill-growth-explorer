@@ -3,66 +3,97 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
-import { useSkills, useLearningItems, getSkillLevelText } from "@/lib/data-service";
+import { useSkills, useLearningItems, useMicroLessons, getSkillLevelText } from "@/lib/data-service";
 import { BookOpen, CheckCircle, Clock, Trophy } from "lucide-react";
 
 export const SkillCourseProgress = () => {
   const { data: skills, isLoading: isSkillsLoading } = useSkills();
   const { data: learningItems, isLoading: isLearningItemsLoading } = useLearningItems();
+  const { data: microLessons, isLoading: isMicroLessonsLoading } = useMicroLessons();
 
-  // Calculate course progress for each skill
-  const skillsWithCourseProgress = useMemo(() => {
-    if (!skills || !learningItems) return [];
+  // Calculate learning progress for each skill (including both learning items and micro lessons)
+  const skillsWithProgress = useMemo(() => {
+    if (!skills || !learningItems || !microLessons) return [];
 
     return skills.map(skill => {
       // Get learning items for this skill
-      const skillItems = learningItems?.filter(item => item.skillIds.includes(skill.id)) || [];
+      const skillLearningItems = learningItems?.filter(item => item.skillIds.includes(skill.id)) || [];
+      const skillMicroLessons = microLessons?.filter(lesson => lesson.skillId === skill.id) || [];
       
-      // Filter courses only
-      const courses = skillItems.filter(item => item.type === 'course');
-      const totalCourses = courses.length;
-      const completedCourses = courses.filter(item => item.completed).length;
+      // Calculate totals and completed counts
+      const totalLearningItems = skillLearningItems.length;
+      const completedLearningItems = skillLearningItems.filter(item => item.completed).length;
+      
+      const totalMicroLessons = skillMicroLessons.length;
+      const completedMicroLessons = skillMicroLessons.filter(lesson => lesson.completed).length;
+      
+      const totalItems = totalLearningItems + totalMicroLessons;
+      const completedItems = completedLearningItems + completedMicroLessons;
       
       // Calculate completion percentage
-      const courseProgressPercentage = totalCourses > 0 
-        ? Math.round((completedCourses / totalCourses) * 100) 
+      const progressPercentage = totalItems > 0 
+        ? Math.round((completedItems / totalItems) * 100) 
         : 0;
       
       return {
         ...skill,
-        courses,
-        totalCourses,
-        completedCourses,
-        courseProgressPercentage
+        learningItems: skillLearningItems,
+        microLessons: skillMicroLessons,
+        totalLearningItems,
+        completedLearningItems,
+        totalMicroLessons,
+        completedMicroLessons,
+        totalItems,
+        completedItems,
+        progressPercentage
       };
-    }).filter(skill => skill.totalCourses > 0); // Only include skills with courses
+    }).filter(skill => skill.totalItems > 0); // Only include skills with learning items or micro lessons
   }, [skills, learningItems]);
 
   // Prepare data for bar chart
   const chartData = useMemo(() => {
-    return skillsWithCourseProgress
-      .sort((a, b) => b.courseProgressPercentage - a.courseProgressPercentage)
-      .slice(0, 5) // Top 5 skills by course completion
-      .map(skill => ({
-        name: skill.name,
-        progress: skill.courseProgressPercentage,
-        fill: skill.courseProgressPercentage === 100 ? '#22c55e' : '#3b82f6'
-      }));
-  }, [skillsWithCourseProgress]);
+    return skillsWithProgress
+      .sort((a, b) => b.progressPercentage - a.progressPercentage)
+      .slice(0, 5) // Top 5 skills by learning item completion
+      .map(skill => {
+        // Determine color based on progress and total items
+        // Only show green for 100% if there are at least 3 total items
+        const hasEnoughItems = skill.totalItems >= 3;
+        const isFullyComplete = skill.progressPercentage === 100 && hasEnoughItems;
+        
+        // For skills with few items, use a different color to indicate partial progress
+        let fillColor;
+        if (isFullyComplete) {
+          fillColor = '#22c55e'; // Green for fully complete with enough items
+        } else if (skill.progressPercentage > 50) {
+          fillColor = '#3b82f6'; // Blue for good progress
+        } else {
+          fillColor = '#f59e0b'; // Amber for limited progress
+        }
+        
+        return {
+          name: skill.name,
+          progress: skill.progressPercentage,
+          fill: fillColor,
+          totalItems: skill.totalItems,
+          completedItems: skill.completedItems
+        };
+      });
+  }, [skillsWithProgress]);
 
   // Calculate total stats
   const totalStats = useMemo(() => {
-    const totalCourses = skillsWithCourseProgress.reduce((sum, skill) => sum + skill.totalCourses, 0);
-    const completedCourses = skillsWithCourseProgress.reduce((sum, skill) => sum + skill.completedCourses, 0);
+    const totalItems = skillsWithProgress.reduce((sum, skill) => sum + skill.totalItems, 0);
+    const completedItems = skillsWithProgress.reduce((sum, skill) => sum + skill.completedItems, 0);
     
     return {
-      totalCourses,
-      completedCourses,
-      completionPercentage: totalCourses > 0 ? Math.round((completedCourses / totalCourses) * 100) : 0
+      totalItems,
+      completedItems,
+      completionPercentage: totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0
     };
-  }, [skillsWithCourseProgress]);
+  }, [skillsWithProgress]);
 
-  if (isSkillsLoading || isLearningItemsLoading) {
+  if (isSkillsLoading || isLearningItemsLoading || isMicroLessonsLoading) {
     return (
       <div className="h-64 flex items-center justify-center">
         <p className="text-muted-foreground">Loading course data...</p>
@@ -79,9 +110,9 @@ export const SkillCourseProgress = () => {
             <Trophy className="h-5 w-5 text-blue-600 dark:text-blue-300" />
           </div>
           <div>
-            <h3 className="font-medium text-blue-800 dark:text-blue-200">Course Completion</h3>
+            <h3 className="font-medium text-blue-800 dark:text-blue-200">Learning Progress</h3>
             <p className="text-sm text-blue-600 dark:text-blue-400">
-              {totalStats.completedCourses} of {totalStats.totalCourses} courses completed
+              {totalStats.completedItems} of {totalStats.totalItems} items completed
             </p>
           </div>
         </div>
@@ -94,7 +125,7 @@ export const SkillCourseProgress = () => {
 
       {/* Bar Chart */}
       <div className="h-64">
-        <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-4">Top Skills by Course Completion</h3>
+        <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-4">Skills by Learning Progress</h3>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
@@ -105,7 +136,8 @@ export const SkillCourseProgress = () => {
             <XAxis type="number" domain={[0, 100]} tickFormatter={(value) => `${value}%`} />
             <YAxis dataKey="name" type="category" width={100} tick={{ fontSize: 12 }} />
             <Tooltip 
-              formatter={(value) => [`${value}%`, 'Completion']}
+              formatter={(value, name, props) => [`${value}%`, 'Completion']}
+              labelFormatter={(label) => `${label}`}
               contentStyle={{
                 backgroundColor: 'rgba(255, 255, 255, 0.8)',
                 borderRadius: '8px',
@@ -114,9 +146,16 @@ export const SkillCourseProgress = () => {
                 boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
               }}
             />
-            <Bar dataKey="progress" radius={[0, 4, 4, 0]}>
+            <Bar 
+              dataKey="progress" 
+              radius={[0, 4, 4, 0]}
+              name="Completion"
+            >
               {chartData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.fill} />
+                <Cell 
+                  key={`cell-${index}`} 
+                  fill={entry.fill} 
+                />
               ))}
             </Bar>
           </BarChart>

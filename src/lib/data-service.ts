@@ -208,7 +208,7 @@ const mockMicroLessons: MicroLesson[] = [
 
 const mockProgressData: ProgressData = {
   skillsCompleted: 2,
-  lessonsCompleted: 14,
+  lessonsCompleted: 1,
   resourcesViewed: 8,
   streakDays: 5,
   weeklyProgress: [65, 70, 75, 80, 60, 0, 0], // Mon-Sun

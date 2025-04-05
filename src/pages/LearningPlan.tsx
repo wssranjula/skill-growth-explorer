@@ -108,72 +108,86 @@ const LearningPlan = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="relative mb-8">
+      <div className="relative mb-10">
         {/* Background Elements */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 rounded-2xl -z-10"></div>
-        <div className="absolute top-0 right-0 w-1/3 h-full bg-primary/10 rounded-r-2xl -z-10"></div>
-        <div className="absolute bottom-0 left-0 h-1 w-1/4 bg-gradient-to-r from-primary to-primary/30 rounded-full -z-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-primary/8 rounded-2xl -z-10"></div>
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-primary/15 rounded-r-2xl -z-10"></div>
+        <div className="absolute bottom-0 left-0 h-1.5 w-1/3 bg-gradient-to-r from-primary to-primary/30 rounded-full -z-10"></div>
+        <div className="absolute top-1/4 right-1/4 w-24 h-24 bg-gradient-radial from-primary/10 to-transparent rounded-full blur-xl -z-10"></div>
         
         {/* Content Container */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 p-8">
           {/* Left Column - Title and Description */}
-          <div className="lg:col-span-7 space-y-4">
-            <div className="flex items-center space-x-3">
-              <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 border border-primary/20">
-                <GraduationCap className="h-6 w-6 text-primary" />
+          <div className="lg:col-span-7 space-y-5">
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/30 shadow-inner shadow-primary/5">
+                <GraduationCap className="h-7 w-7 text-primary" />
               </div>
               <div>
-                <h1 className="text-4xl font-bold tracking-tight">
-                  Learning <span className="text-primary">Plan</span>
+                <h1 className="text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80">
+                  Learning <span className="text-gray-800">Plan</span>
                 </h1>
-                <div className="flex items-center mt-1">
-                  <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 mr-2">
+                <div className="flex items-center mt-2">
+                  <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 mr-3 px-3 py-1 text-xs font-medium shadow-sm">
                     Professional Development
                   </Badge>
-                  <span className="text-sm text-muted-foreground">Updated today</span>
+                  <span className="text-sm text-muted-foreground flex items-center">
+                    <Clock className="h-3.5 w-3.5 mr-1.5 text-primary/70" /> Updated today
+                  </span>
                 </div>
               </div>
             </div>
             
-            <p className="text-lg text-muted-foreground pl-14">
-              Track, develop, and master your professional skills
+            <p className="text-lg text-muted-foreground pl-16 leading-relaxed">
+              Track, develop, and master your professional skills with a personalized learning journey
             </p>
             
-       
+            <div className="pl-16 flex space-x-3 mt-2">
+              <Badge className="bg-blue-50 text-blue-600 hover:bg-blue-100 border-none transition-colors duration-200">
+                <Target className="h-3.5 w-3.5 mr-1.5" /> Goal-oriented
+              </Badge>
+              <Badge className="bg-green-50 text-green-600 hover:bg-green-100 border-none transition-colors duration-200">
+                <Award className="h-3.5 w-3.5 mr-1.5" /> Skill-based
+              </Badge>
+              <Badge className="bg-amber-50 text-amber-600 hover:bg-amber-100 border-none transition-colors duration-200">
+                <Zap className="h-3.5 w-3.5 mr-1.5" /> Fast-paced
+              </Badge>
+            </div>
           </div>
           
           {/* Right Column - Stats */}
           <div className="lg:col-span-5">
-            <div className="bg-white rounded-xl border border-primary/10 shadow-[0_10px_25px_-12px_rgba(0,0,0,0.15),0_4px_6px_-2px_rgba(0,0,0,0.05)] p-5 relative overflow-hidden transform hover:translate-y-[-2px] transition-all duration-300">
+            <div className="bg-white rounded-xl border border-primary/15 shadow-[0_15px_30px_-12px_rgba(0,0,0,0.15),0_8px_12px_-4px_rgba(0,0,0,0.08)] p-6 relative overflow-hidden transform hover:translate-y-[-3px] hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.2),0_10px_15px_-5px_rgba(0,0,0,0.1)] transition-all duration-300">
               {/* Decorative accent */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-primary/80 to-primary/30"></div>
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary via-primary/80 to-primary/30"></div>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-radial from-primary/5 to-transparent rounded-full -z-10"></div>
               
               {/* Points Display */}
-              <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
+              <div className="flex items-center justify-between mb-5 pb-4 border-b border-gray-100">
                 <div>
-                  <h3 className="font-semibold text-sm text-gray-800 tracking-wide">LEARNING POINTS</h3>
-                  <div className="flex items-center mt-1">
-                    <div className="text-2xl font-bold text-primary">{totalPoints}</div>
-                    <div className="ml-2 text-xs text-muted-foreground">
-                      <span className="inline-flex items-center text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full">
-                        <span className="mr-1">+</span>
-                        {pointsByDifficulty.beginner + pointsByDifficulty.intermediate + pointsByDifficulty.advanced} pts
+                  <h3 className="font-semibold text-sm text-gray-800 tracking-wider uppercase bg-gradient-to-r from-primary/90 to-primary/70 bg-clip-text text-transparent">LEARNING POINTS</h3>
+                  <div className="flex items-center mt-2">
+                    <div className="text-3xl font-bold text-primary">{totalPoints}</div>
+                    <div className="ml-3 text-xs">
+                      <span className="inline-flex items-center text-green-600 bg-green-50 px-2.5 py-1 rounded-full shadow-sm border border-green-100">
+                        <Trophy className="h-3.5 w-3.5 mr-1.5" />
+                        +{pointsByDifficulty.beginner + pointsByDifficulty.intermediate + pointsByDifficulty.advanced} points
                       </span>
                     </div>
                   </div>
                 </div>
-                <div className="flex space-x-1">
+                <div className="flex space-x-2.5">
                   <div className="flex flex-col items-center">
-                    <div className="text-xs font-medium text-blue-600 bg-blue-50 w-6 h-6 rounded-full flex items-center justify-center">B</div>
-                    <div className="text-xs mt-0.5">{pointsByDifficulty.beginner}</div>
+                    <div className="text-xs font-medium text-blue-600 bg-gradient-to-b from-blue-100 to-blue-50 w-8 h-8 rounded-full flex items-center justify-center shadow-sm border border-blue-200/30">B</div>
+                    <div className="text-xs font-medium mt-1.5">{pointsByDifficulty.beginner}</div>
                   </div>
                   <div className="flex flex-col items-center">
-                    <div className="text-xs font-medium text-green-600 bg-green-50 w-6 h-6 rounded-full flex items-center justify-center">I</div>
-                    <div className="text-xs mt-0.5">{pointsByDifficulty.intermediate}</div>
+                    <div className="text-xs font-medium text-green-600 bg-gradient-to-b from-green-100 to-green-50 w-8 h-8 rounded-full flex items-center justify-center shadow-sm border border-green-200/30">I</div>
+                    <div className="text-xs font-medium mt-1.5">{pointsByDifficulty.intermediate}</div>
                   </div>
                   <div className="flex flex-col items-center">
-                    <div className="text-xs font-medium text-purple-600 bg-purple-50 w-6 h-6 rounded-full flex items-center justify-center">A</div>
-                    <div className="text-xs mt-0.5">{pointsByDifficulty.advanced}</div>
+                    <div className="text-xs font-medium text-purple-600 bg-gradient-to-b from-purple-100 to-purple-50 w-8 h-8 rounded-full flex items-center justify-center shadow-sm border border-purple-200/30">A</div>
+                    <div className="text-xs font-medium mt-1.5">{pointsByDifficulty.advanced}</div>
                   </div>
                 </div>
               </div>
