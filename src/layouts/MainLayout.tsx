@@ -35,8 +35,9 @@ const MainLayout = () => {
     { path: "/skills", label: "Skills Analysis", icon: BrainCircuit },
     { path: "/learning-plan", label: "Learning Plan", icon: GraduationCap },
     { path: "/resources", label: "Resources", icon: BookText },
-    { path: "/trending", label: "Trending Content", icon: TrendingUp },
     { path: "/quick-learning", label: "Quick Learning", icon: CloudLightning },
+    { path: "/trending", label: "Trending Content", icon: TrendingUp },
+    
   ];
 
   const toggleSidebar = () => {
@@ -124,7 +125,7 @@ const MainLayout = () => {
                 <AvatarFallback className="bg-gradient-to-br from-primary to-indigo-600 text-white font-medium">AC</AvatarFallback>
               </Avatar>
               <div>
-                <p className="text-sm font-semibold dark:text-white">Alex Chen</p>
+                <p className="text-sm font-semibold dark:text-white">Suresh Shehan</p>
                 <p className="text-xs text-slate-500 dark:text-slate-400">Software Engineer</p>
               </div>
               <Popover>

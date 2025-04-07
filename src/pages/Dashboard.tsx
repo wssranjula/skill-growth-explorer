@@ -137,13 +137,13 @@ const Dashboard = () => {
         <div className="relative p-8 backdrop-blur-sm">
           <div className="flex items-center">
             <div className="flex-1">
-              <div className="flex items-center mb-2">
+              {/* <div className="flex items-center mb-2">
                 <div className="h-3 w-3 rounded-full bg-green-400 mr-2 animate-pulse"></div>
                 <span className="text-white text-sm font-medium tracking-wider uppercase">Premium Account</span>
-              </div>
+              </div> */}
               
               <h1 className="text-4xl font-bold text-white tracking-tight">
-                Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-yellow-400">Alex!</span>
+                Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-yellow-400">Suresh!</span>
               </h1>
               
               <p className="text-white/80 mt-2">
